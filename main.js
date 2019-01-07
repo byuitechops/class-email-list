@@ -1,41 +1,56 @@
-function createCORSRequest(method, url) {
-    var xhr = new XMLHttpRequest();
-    if ('withCredentials' in xhr) {
+let selectAllCheckbox = document.getElementById('select-all');
+let copyButton = document.getElementById('copy-button');
+let navigator = window.navigator;
 
-        // Check if the XMLHttpRequest object has a "withCredentials" property.
-        // "withCredentials" only exists on XMLHTTPRequest2 objects.
-        xhr.open(method, url, true);
-
-    } else if (typeof XDomainRequest != 'undefined') {
-
-        // Otherwise, check if XDomainRequest.
-        // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
-        xhr = new XDomainRequest();
-        xhr.open(method, url);
-
+function selectAll() {
+    let checkboxes = Array.from(document.querySelectorAll('.select-single'));
+    if (selectAllCheckbox.checked) {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = true;
+        });
     } else {
-
-        // Otherwise, CORS is not supported by the browser.
-        xhr = null;
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
     }
-    return xhr;
 }
 
-var url = 'https://byui.instructure.com/api/v1/courses?enrollment_type=teacher';
-var xhr = createCORSRequest('GET', url);
-if (!xhr) {
-    throw new Error('CORS not supported');
+function copyToClipboard() {
+    let emails = Array.from(document.querySelectorAll('.email'));
+    let checkedEmails = Array.from(document.querySelectorAll('.select-single')).map((checkbox, i) => {
+        if (checkbox.checked) {
+            return i;
+        }
+    });
+    let emailString = '';
+    if (checkedEmails.length) {
+        emails.forEach((email, i) => {
+            if (checkedEmails.includes(i)) {
+                emailString += email.textContent + '\n';
+            }
+        });
+        try {
+            navigator.clipboard.writeText(emailString);
+        } catch (err) {
+            console.log(err);
+            return;
+        }
+
+        let toastMessage = document.getElementById('toastMessage');
+        toastMessage.className = 'show';
+        setTimeout(function () {
+            toastMessage.className = toastMessage.className.replace('show', '');
+        }, 3000);
+    } else {
+        alert('Please select at least one email to copy.');
+    }
 }
 
-xhr.onload = function () {
-    var responseText = xhr.responseText;
-    console.log(responseText);
-    // process the response.
-};
+function updateSelectAll() {
+    let checkboxes = Array.from(document.querySelectorAll('.select-single'));
+    selectAllCheckbox.checked = checkboxes.every(checkbox => checkbox.checked);
+}
 
-xhr.onerror = function () {
-    console.log('There was an Error');
-    console.log(xhr);
-};
+selectAllCheckbox.addEventListener('click', selectAll);
 
-xhr.send();
+copyButton.addEventListener('click', copyToClipboard);

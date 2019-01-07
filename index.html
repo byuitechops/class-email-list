@@ -10,6 +10,30 @@
 </head>
 
 <body>
+    <div class="byui-header"></div>
+    <div id="email-list">
+        <h2>Class Email List</h2>
+
+        <table id="email-table">
+            <tr>
+                <th><input class="browser-default" id="select-all" type="checkbox"></th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+            <tr>
+                <td><input onclick="updateSelectAll()" class="select-single" type="checkbox"></td>
+                <td>Seth Farr</td>
+                <td class="email"><a href="mailto:far16016@byui.edu">far16016@byui.edu</a></td>
+            </tr>
+            <tr>
+                <td><input onclick="updateSelectAll()" class="select-single" type="checkbox"></td>
+                <td>Cal Wilson</td>
+                <td class="email"><a href="mailto:wil13034@byui.edu">wil13034@byui.edu</a></td>
+            </tr>
+        </table>
+    </div>
+    <div id="toastMessage">Copied to Clipboard</div>
+    <button id="copy-button">Copy to Clipboard</button>
     <script src="main.js"></script>
 </body>
 
