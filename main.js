@@ -1,8 +1,41 @@
-var xhttp = new XMLHttpRequest();
-xhttp.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-        console.log(JSON.parse(this.responseText));
+function createCORSRequest(method, url) {
+    var xhr = new XMLHttpRequest();
+    if ('withCredentials' in xhr) {
+
+        // Check if the XMLHttpRequest object has a "withCredentials" property.
+        // "withCredentials" only exists on XMLHTTPRequest2 objects.
+        xhr.open(method, url, true);
+
+    } else if (typeof XDomainRequest != 'undefined') {
+
+        // Otherwise, check if XDomainRequest.
+        // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+        xhr = new XDomainRequest();
+        xhr.open(method, url);
+
+    } else {
+
+        // Otherwise, CORS is not supported by the browser.
+        xhr = null;
     }
+    return xhr;
+}
+
+var url = 'https://byui.instructure.com/api/v1/courses?enrollment_type=teacher';
+var xhr = createCORSRequest('GET', url);
+if (!xhr) {
+    throw new Error('CORS not supported');
+}
+
+xhr.onload = function () {
+    var responseText = xhr.responseText;
+    console.log(responseText);
+    // process the response.
 };
-xhttp.open('GET', 'https://byui.instructure.com/api/v1/courses?enrollment_type=teacher', true);
-xhttp.send();
+
+xhr.onerror = function () {
+    console.log('There was an Error');
+    console.log(xhr);
+};
+
+xhr.send();
